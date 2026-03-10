@@ -9,6 +9,9 @@ import UIKit
 
 class OptionCell: UITableViewCell {
 
+    @IBOutlet weak var optionText: UILabel!
+    @IBOutlet weak var successImage: UIImageView!
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -16,8 +19,6 @@ class OptionCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

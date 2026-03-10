@@ -15,24 +15,50 @@ class PollViewController: BaseQuizViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var nxtBtn: UIView!
 
-    let options = ["Option A", "Option B", "Option C", "Option D","Option A", "Option B", "Option C", "Option D","Option A", "Option B", "Option C", "Option D","Option A", "Option B", "Option C", "Option D","Option A", "Option B", "Option C", "Option D","Option A", "Option B", "Option C", "Option D"]
+    var durationInSeconds:Int = 10
+
+    let viewModel = PollViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        header.backButtonView.isHidden = true
         mainStackView.addArrangedSubview(mainView)
         view.addSubview(nxtBtn)
 
-        startCountdown(durationInSeconds: 120)
-        setupTableView()
-        setupButtonActions()
-        questionLabel.text = "Which language is used for iOS Development?"
-        questionCount.text = "Question 1 of 25"
+        tableView.isHidden = true
+        questionLabel.isHidden = true
+        questionCount.isHidden = true
+        nxtBtn.isHidden = true
+
+        let loader = UIActivityIndicatorView(style: .large)
+        loader.center = view.center
+        view.addSubview(loader)
+        loader.startAnimating()
+
+        viewModel.fetchQuestions { [weak self] in
+            loader.stopAnimating()
+            self?.tableView.isHidden = false
+            self?.updateUI()
+            self?.setupTableView()
+            self?.setupButtonActions()
+            self?.questionLabel.isHidden = false
+            self?.questionCount.isHidden = false
+            self?.nxtBtn.isHidden = false
+        }
+
+
     }
 
+    
+
     override func timeUp() {
-        // Show "Poll Ended" alert
-        print("Show Poll Ended alert")
+        moveToNext()
+    }
+
+    @objc override func handleBackTap() {
+        print("handleBackTap")
+        viewModel.moveToPreviousQuestion()
+        updateUI()
     }
 
     private func setupTableView() {
@@ -44,6 +70,27 @@ class PollViewController: BaseQuizViewController {
         tableView.register(nib, forCellReuseIdentifier: "OptionCell")
     }
 
+    private func updateUI( _ resetCountDown: Bool? = true) {
+        questionLabel.text = viewModel.currentQuestion.questionText
+        questionCount.text = viewModel.questionProgressText
+
+        updateHeaderProgress(
+            current: viewModel.currentQuestionIndex + 1,
+            total: viewModel.totalQuestions
+        )
+
+        if resetCountDown ?? true {
+            header.backButtonView.isHidden = viewModel.currentQuestionIndex > 0 ? false : true
+            startCountdown(durationInSeconds: durationInSeconds)
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.nxtBtn.alpha = self.viewModel.isNextButtonEnabled ? 1.0 : 0.5
+            self.nxtBtn.isUserInteractionEnabled = self.viewModel.isNextButtonEnabled
+        }
+        tableView.reloadData()
+    }
+
     private func setupButtonActions() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleNextTap))
         nxtBtn.addGestureRecognizer(tap)
@@ -51,8 +98,23 @@ class PollViewController: BaseQuizViewController {
     }
 
     @objc private func handleNextTap() {
-        print("Next button tapped! Action triggered on Touch Up (Apple Standard).")
-        // Trigger your next question logic here
+        DispatchQueue.global().async {
+            for _ in 0...10_000_000 {
+                print("Processing...")
+            }
+            DispatchQueue.main.async {
+                self.moveToNext()
+            }
+        }
+
+    }
+
+    func moveToNext() {
+        if viewModel.moveToNextQuestion() {
+            updateUI()
+        } else {
+            print("Poll Ended")
+        }
     }
 }
 
@@ -62,7 +124,7 @@ class PollViewController: BaseQuizViewController {
 extension PollViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return options.count
+        return viewModel.currentQuestion.options.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -72,17 +134,17 @@ extension PollViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "OptionCell", for: indexPath) as! OptionCell
-        cell.optionText.text = options[indexPath.section]
-        cell.successImage.isHidden = true
+
+        let optionText = viewModel.currentQuestion.options[indexPath.section]
+        cell.optionText.text = optionText
+        cell.successImage.isHidden = !viewModel.selectedIndices.contains(indexPath.section)
 
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedOptionIndex = indexPath.section
-        print("User selected option number: \(selectedOptionIndex)")
-        let cell = tableView.cellForRow(at: indexPath) as? OptionCell
-        cell?.successImage.isHidden = false
+        viewModel.handleSelection(at: indexPath.section)
+        updateUI(false)
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {

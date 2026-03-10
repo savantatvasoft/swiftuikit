@@ -11,19 +11,33 @@ class DetailsVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("DetailsVC → viewDidLoad")
 
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemOrange
+        title = "Details"
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("DetailsVC → viewWillAppear")
     }
-    */
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("DetailsVC → viewDidAppear")
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("DetailsVC → viewWillDisappear")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("DetailsVC → viewDidDisappear")
+    }
+
+    deinit {
+        print("DetailsVC → deinit")
+    }
 }

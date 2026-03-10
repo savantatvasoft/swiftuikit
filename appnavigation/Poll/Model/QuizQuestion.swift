@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct QuizQuestion {
+    let questionText: String
+    let options: [String]
+    let isMultipleChoice: Bool // The key to check in didSelectRowAt
+}
