@@ -67,11 +67,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         //MARK: AuthenticationVCID
 
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        let window = UIWindow(windowScene: windowScene)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let newsVC = storyboard.instantiateViewController(withIdentifier: "AuthenticationVCID") as! AuthenticationVC
-        let nav = UINavigationController(rootViewController: newsVC)
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//        let window = UIWindow(windowScene: windowScene)
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let newsVC = storyboard.instantiateViewController(withIdentifier: "AuthenticationVCID") as! AuthenticationVC
+//        let nav = UINavigationController(rootViewController: newsVC)
 
         //MARK: DynamicHeightVCID
 //        guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -80,6 +80,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let newsVC = storyboard.instantiateViewController(withIdentifier: "DynamicHeightVCID") as! DynamicHeightVC
 //        let nav = UINavigationController(rootViewController: newsVC)
 
+
+        //MARK: PrioritiesViewController
+
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: windowScene)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let newsVC = storyboard.instantiateViewController(withIdentifier: "PrioritiesViewControllerID") as! PrioritiesViewController
+        let nav = UINavigationController(rootViewController: newsVC)
 
         window.rootViewController = nav
         self.window = window
