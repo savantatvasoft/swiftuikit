@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -67,11 +68,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         //MARK: AuthenticationVCID
 
-//        guard let windowScene = (scene as? UIWindowScene) else { return }
-//        let window = UIWindow(windowScene: windowScene)
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let newsVC = storyboard.instantiateViewController(withIdentifier: "AuthenticationVCID") as! AuthenticationVC
-//        let nav = UINavigationController(rootViewController: newsVC)
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: windowScene)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let newsVC = storyboard.instantiateViewController(withIdentifier: "AuthenticationVCID") as! AuthenticationVC
+        let nav = UINavigationController(rootViewController: newsVC)
 
         //MARK: DynamicHeightVCID
 //        guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -83,11 +84,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         //MARK: PrioritiesViewController
 
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        let window = UIWindow(windowScene: windowScene)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let newsVC = storyboard.instantiateViewController(withIdentifier: "PrioritiesViewControllerID") as! PrioritiesViewController
-        let nav = UINavigationController(rootViewController: newsVC)
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//        let window = UIWindow(windowScene: windowScene)
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let newsVC = storyboard.instantiateViewController(withIdentifier: "PrioritiesViewControllerID") as! PrioritiesViewController
+//        let nav = UINavigationController(rootViewController: newsVC)
 
         window.rootViewController = nav
         self.window = window
@@ -121,6 +122,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        // 1. Get the URL that Google sent back
+        guard let url = URLContexts.first?.url else { return }
+
+        // 2. Hand it to Google SDK to parse the login result
+        GIDSignIn.sharedInstance.handle(url)
     }
 
 
